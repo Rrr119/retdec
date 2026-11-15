@@ -51,6 +51,11 @@ std::string mode2string(const common::Architecture& arch, cs_mode m)
 		ret += m & CS_MODE_64 ? ", CS_MODE_64" : ", CS_MODE_32";
 		ret += m & CS_MODE_QPX ? ", CS_MODE_QPX" : "";
 	}
+	else if (arch.isRiscV())
+	{
+		ret += m & CS_MODE_RISCV64 ? ", CS_MODE_RISCV64" : ", CS_MODE_RISCV32";
+		ret += m & CS_MODE_RISCVC ? ", CS_MODE_RISCVC" : "";
+	}
 	else
 	{
 		assert(false);

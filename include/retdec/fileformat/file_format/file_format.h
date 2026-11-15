@@ -168,6 +168,7 @@ class FileFormat : public retdec::utils::ByteValueStorage, private retdec::utils
 		bool isArm() const;
 		bool isPowerPc() const;
 		bool isMips() const;
+		bool isRiscV() const;
 		bool isUnknownArch() const;
 		bool isPe() const;
 		bool isElf() const;

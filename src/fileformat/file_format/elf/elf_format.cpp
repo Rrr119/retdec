@@ -1599,6 +1599,8 @@ bool ElfFormat::getRelocationMask(unsigned relType, std::vector<std::uint8_t> &m
 			maps.push_back(&powerpcRelocationMap);
 			maps.push_back(&powerpc64RelocationMap);
 			break;
+		case EM_RISCV:
+			return false;
 		case EM_NONE:
 			if(isWiiPowerPc())
 			{
@@ -2746,6 +2748,8 @@ std::size_t ElfFormat::getBytesPerWord() const
 			return 4;
 		case EM_PPC64:
 			return 8;
+		case EM_RISCV:
+			return (elfClass == ELFCLASS64) ? 8 : 4;
 		case EM_NONE:
 			return isWiiPowerPc() ? 4 : 0;
 
@@ -2919,6 +2923,8 @@ Architecture ElfFormat::getTargetArchitecture() const
 		case EM_PPC:
 		case EM_PPC64:
 			return Architecture::POWERPC;
+		case EM_RISCV:
+			return Architecture::RISCV;
 		case EM_NONE:
 			return isWiiPowerPc() ? Architecture::POWERPC : Architecture::UNKNOWN;
 		default:

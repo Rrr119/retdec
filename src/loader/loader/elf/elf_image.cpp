@@ -24,6 +24,18 @@
 #define R_AARCH64_ADR_PRE 275
 #define R_AARCH64_ADD_ABS 277
 
+#ifndef R_RISCV_32
+#define R_RISCV_32 1
+#define R_RISCV_64 2
+#define R_RISCV_BRANCH 16
+#define R_RISCV_JAL 17
+#define R_RISCV_CALL 18
+#define R_RISCV_CALL_PLT 19
+#define R_RISCV_HI20 26
+#define R_RISCV_LO12_I 27
+#define R_RISCV_LO12_S 28
+#endif
+
 namespace retdec {
 namespace loader {
 
@@ -878,6 +890,130 @@ void ElfImage::resolveRelocation(const retdec::fileformat::Relocation& rel, cons
 					return;
 			}
 
+			break;
+		}
+		case retdec::fileformat::Architecture::RISCV:
+		{
+			switch (rel.getType())
+			{
+				case R_RISCV_32:
+				{
+					std::uint64_t value;
+					get4Byte(rel.getAddress(), value);
+					value += symAddress + rel.getAddend();
+					set4Byte(rel.getAddress(), value);
+					break;
+				}
+				case R_RISCV_64:
+				{
+					std::uint64_t value;
+					get8Byte(rel.getAddress(), value);
+					value += symAddress + rel.getAddend();
+					set8Byte(rel.getAddress(), value);
+					break;
+				}
+				case R_RISCV_JAL:
+				{
+					std::uint64_t insn;
+					get4Byte(rel.getAddress(), insn);
+					const std::int64_t offset =
+							static_cast<std::int64_t>(symAddress)
+							+ rel.getAddend()
+							- static_cast<std::int64_t>(rel.getAddress());
+					if (offset % 2 != 0)
+					{
+						return;
+					}
+					const std::uint64_t imm = static_cast<std::uint64_t>(offset);
+					insn &= 0x00000fff;
+					insn |= (imm & 0x00100000) << 11;
+					insn |= (imm & 0x000007fe) << 20;
+					insn |= (imm & 0x00000800) << 9;
+					insn |= (imm & 0x000ff000);
+					set4Byte(rel.getAddress(), insn);
+					break;
+				}
+				case R_RISCV_BRANCH:
+				{
+					std::uint64_t insn;
+					get4Byte(rel.getAddress(), insn);
+					const std::int64_t offset =
+							static_cast<std::int64_t>(symAddress)
+							+ rel.getAddend()
+							- static_cast<std::int64_t>(rel.getAddress());
+					if (offset % 2 != 0)
+					{
+						return;
+					}
+					const std::uint64_t imm = static_cast<std::uint64_t>(offset);
+					insn &= 0x01fff07f;
+					insn |= (imm & 0x00001000) << 19;
+					insn |= (imm & 0x000007e0) << 20;
+					insn |= (imm & 0x0000001e) << 7;
+					insn |= (imm & 0x00000800) >> 4;
+					set4Byte(rel.getAddress(), insn);
+					break;
+				}
+				case R_RISCV_CALL:
+				case R_RISCV_CALL_PLT:
+				{
+					std::uint64_t auipc;
+					std::uint64_t jalr;
+					get4Byte(rel.getAddress(), auipc);
+					get4Byte(rel.getAddress() + 4, jalr);
+					const std::int64_t offset =
+							static_cast<std::int64_t>(symAddress)
+							+ rel.getAddend()
+							- static_cast<std::int64_t>(rel.getAddress());
+					const std::int64_t hi = (offset + 0x800) >> 12;
+					const std::int64_t lo = offset - (hi << 12);
+					auipc &= 0x00000fff;
+					auipc |= (static_cast<std::uint64_t>(hi) & 0xfffff) << 12;
+					jalr &= 0x000fffff;
+					jalr |= (static_cast<std::uint64_t>(lo) & 0xfff) << 20;
+					set4Byte(rel.getAddress(), auipc);
+					set4Byte(rel.getAddress() + 4, jalr);
+					break;
+				}
+				case R_RISCV_HI20:
+				{
+					std::uint64_t insn;
+					get4Byte(rel.getAddress(), insn);
+					const std::int64_t value =
+							static_cast<std::int64_t>(symAddress)
+							+ rel.getAddend()
+							+ 0x800;
+					insn &= 0x00000fff;
+					insn |= (static_cast<std::uint64_t>(value >> 12) & 0xfffff)
+							<< 12;
+					set4Byte(rel.getAddress(), insn);
+					break;
+				}
+				case R_RISCV_LO12_I:
+				case R_RISCV_LO12_S:
+				{
+					std::uint64_t insn;
+					get4Byte(rel.getAddress(), insn);
+					const std::uint64_t lo =
+							static_cast<std::uint64_t>(symAddress)
+							+ rel.getAddend();
+					if (rel.getType() == R_RISCV_LO12_I)
+					{
+						insn &= 0x000fffff;
+						insn |= (lo & 0xfff) << 20;
+					}
+					else
+					{
+						insn &= 0x01fff07f;
+						insn |= (lo & 0x1f) << 7;
+						insn |= ((lo >> 5) & 0x7f) << 25;
+					}
+					set4Byte(rel.getAddress(), insn);
+					break;
+				}
+				default:
+					return;
+			}
 			break;
 		}
 		default:

@@ -1,0 +1,17 @@
+{
+  "root": "/home/dev/feedback/uid21946",
+  "B": "/home/dev/feedback/uid21946",
+  "sha": "9450585772e6f1c18e5f0b2ad5518a18d6bce71e",
+  "wslDistro": "Ubuntu-26.04",
+  "source": {
+    "owner": "avast",
+    "repo": "retdec",
+    "sha": "9450585772e6f1c18e5f0b2ad5518a18d6bce71e"
+  },
+  "fork": {
+    "owner": "Rrr119",
+    "repo": "retdec",
+    "cloneUrl": "https://github.com/Rrr119/retdec.git"
+  },
+  "at": "2026-11-15T20:16:11.824Z"
+}

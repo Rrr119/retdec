@@ -13,6 +13,7 @@
 #include "retdec/bin2llvmir/optimizations/decoder/decoder.h"
 #include "retdec/bin2llvmir/utils/llvm.h"
 #include "retdec/bin2llvmir/utils/capstone.h"
+#include "retdec/capstone2llvmir/riscv/riscv.h"
 
 using namespace retdec::capstone2llvmir;
 using namespace retdec::common;
@@ -397,6 +398,10 @@ std::size_t Decoder::decodeJumpTargetDryRun(
 	else if (_config->getConfig().architecture.isPpc())
 	{
 		return decodeJumpTargetDryRun_ppc(jt, bytes, strict);
+	}
+	else if (_config->getConfig().architecture.isRiscV())
+	{
+		return false;
 	}
 	else
 	{
@@ -1609,6 +1614,17 @@ void Decoder::finalizePseudoCalls()
 			if (auto* st = llvm::dyn_cast<llvm::StoreInst>(i))
 			{
 				if (_abi->isRegister(st->getPointerOperand(), ARM_REG_LR))
+				{
+					st->eraseFromParent();
+					i = nullptr;
+				}
+			}
+
+			if (_config->getConfig().architecture.isRiscV()
+					&& icf)
+			if (auto* st = llvm::dyn_cast<llvm::StoreInst>(i))
+			{
+				if (_abi->isRegister(st->getPointerOperand(), RISCV_REG_RA))
 				{
 					st->eraseFromParent();
 					i = nullptr;

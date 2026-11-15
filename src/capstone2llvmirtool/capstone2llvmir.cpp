@@ -56,6 +56,8 @@ class ProgramOptions
 					else if (_arch == "mips") arch = CS_ARCH_MIPS;
 					else if (_arch == "x86") arch = CS_ARCH_X86;
 					else if (_arch == "ppc") arch = CS_ARCH_PPC;
+					else if (_arch == "riscv32") arch = CS_ARCH_RISCV;
+					else if (_arch == "riscv64") arch = CS_ARCH_RISCV;
 					else if (_arch == "sparc") arch = CS_ARCH_SPARC;
 					else if (_arch == "sysz") arch = CS_ARCH_SYSZ;
 					else if (_arch == "xcore") arch = CS_ARCH_XCORE;
@@ -91,6 +93,8 @@ class ProgramOptions
 					else if (_basicMode == "mips32r6") basicMode = CS_MODE_MIPS32R6;
 					else if (_basicMode == "mips32") basicMode = CS_MODE_MIPS32;
 					else if (_basicMode == "mips64") basicMode = CS_MODE_MIPS64;
+					else if (_basicMode == "riscv32") basicMode = CS_MODE_RISCV32;
+					else if (_basicMode == "riscv64") basicMode = CS_MODE_RISCV64;
 					else printHelpAndDie();
 				}
 				else if (c == "-e")
@@ -102,6 +106,9 @@ class ProgramOptions
 					else if (_extraMode == "micro") extraMode = CS_MODE_MICRO;
 					else if (_extraMode == "v9") extraMode = CS_MODE_V9;
 					else if (_extraMode == "big") extraMode = CS_MODE_BIG_ENDIAN;
+					else if (_extraMode == "compressed" || _extraMode == "c")
+						extraMode = static_cast<cs_mode>(
+								extraMode | CS_MODE_RISCVC);
 					else printHelpAndDie();
 				}
 				else if (c == "-o")
@@ -120,7 +127,14 @@ class ProgramOptions
 
 			if (_useDefaultBasicMode)
 			{
-				basicMode = getDefaultBasicModeFromArch(arch);
+				if (_arch == "riscv64")
+				{
+					basicMode = CS_MODE_RISCV64;
+				}
+				else
+				{
+					basicMode = getDefaultBasicModeFromArch(arch);
+				}
 			}
 		}
 
@@ -146,6 +160,7 @@ class ProgramOptions
 				case CS_ARCH_MIPS: return CS_MODE_MIPS32; // CS_MODE_MIPS{32, 64, 32R6}
 				case CS_ARCH_X86: return CS_MODE_32; // CS_MODE_{16, 32, 64}
 				case CS_ARCH_PPC: return CS_MODE_32;
+				case CS_ARCH_RISCV: return CS_MODE_RISCV32; // CS_MODE_RISCV64
 				case CS_ARCH_SPARC: return CS_MODE_LITTLE_ENDIAN; // 0
 				case CS_ARCH_SYSZ: return CS_MODE_LITTLE_ENDIAN;
 				case CS_ARCH_XCORE: return CS_MODE_LITTLE_ENDIAN;
@@ -181,7 +196,7 @@ class ProgramOptions
 				"\t-h|--help Show this help.\n"
 				"\t--version Show RetDec version.\n"
 				"\t-a name   Set architecture name.\n"
-				"\t          Possible values: arm, arm64, mips, x86, ppc, sparc, sysz, xcore\n"
+				"\t          Possible values: arm, arm64, mips, x86, ppc, riscv32, riscv64, sparc, sysz, xcore\n"
 				"\t          Default value: x86.\n"
 				"\t-b base   Base address in hexadecimal format (e.g. 0x1000).\n"
 				"\t          Default value 0x1000.\n"
@@ -192,10 +207,10 @@ class ProgramOptions
 				"\t          Most of the time, this is more convenient than -c option.\n"
 				"\t-m mode   Capstone basic mode to use.\n"
 				"\t          Possible values: arm, thumb, 16, 32, 64, mips3, mips32r6,\n"
-				"\t          mips32, mips64\n"
+				"\t          mips32, mips64, riscv32, riscv64\n"
 				"\t          Default value: 32.\n"
 				"\t-e mode   Capstone extra mode to use.\n"
-				"\t          Possible values: little, big, micro, mclass, v8, v9.\n"
+				"\t          Possible values: little, big, micro, mclass, v8, v9, compressed.\n"
 				"\t          Default value: little.\n"
 				"\t-o out    Output file name where LLVM IR will be generated.\n"
 				"\t          Default value: stdout\n";

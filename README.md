@@ -19,6 +19,7 @@ The decompiler is not limited to any particular target architecture, operating s
 * Supported architectures:
     * 32-bit: Intel x86, ARM, MIPS, PIC32, and PowerPC
     * 64-bit: x86-64, ARM64 (AArch64)
+    * RISC-V: RV32 and RV64, including the standard compressed (C) extension
 
 Features:
 * Static analysis of executable files with detailed information.

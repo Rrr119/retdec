@@ -4,6 +4,7 @@ add_executable(tests-capstone2llvmir
 	arm64_tests.cpp
 	mips_tests.cpp
 	powerpc_tests.cpp
+	riscv_tests.cpp
 	x86_tests.cpp
 )
 

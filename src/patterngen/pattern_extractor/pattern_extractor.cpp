@@ -511,6 +511,9 @@ std::string PatternExtractor::getArchAsString()
 		case Architecture::ARM:
 			return "ARM";
 
+		case Architecture::RISCV:
+			return "RISC-V";
+
 		default:
 			return "unknown architecture";
 	}

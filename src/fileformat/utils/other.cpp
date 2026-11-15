@@ -37,7 +37,8 @@ const std::map<Architecture, std::vector<std::string>> architectureMap =
 	{Architecture::X86_64, {"Intel x86-64"}},
 	{Architecture::ARM, {"ARM", "ARM + Thumb"}},
 	{Architecture::POWERPC, {"PowerPC"}},
-	{Architecture::MIPS, {"MIPS", "PIC32"}}
+	{Architecture::MIPS, {"MIPS", "PIC32"}},
+	{Architecture::RISCV, {"RISC-V"}}
 };
 
 const std::unordered_map<std::size_t, std::string> lcids =

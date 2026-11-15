@@ -21,6 +21,8 @@ const std::string ARCH_THUMB   = "thumb";
 const std::string ARCH_x86     = "x86";
 const std::string ARCH_PPC     = "powerpc";
 const std::string ARCH_PPC64   = "powerpc64";
+const std::string ARCH_RISCV32 = "riscv32";
+const std::string ARCH_RISCV64 = "riscv64";
 
 } // anonymous namespace
 
@@ -39,6 +41,9 @@ bool Architecture::isX86_32() const       { return isX86() && getBitSize() == 32
 bool Architecture::isX86_64() const       { return isX86() && getBitSize() == 64; }
 bool Architecture::isPpc() const          { return isArch(eArch::PPC); }
 bool Architecture::isPpc64() const        { return isPpc() && getBitSize() == 64; }
+bool Architecture::isRiscV() const         { return isArch(eArch::RISCV); }
+bool Architecture::isRiscV32() const       { return isRiscV() && getBitSize() == 32; }
+bool Architecture::isRiscV64() const       { return isRiscV() && getBitSize() == 64; }
 bool Architecture::isKnown() const        { return !isUnknown(); }
 bool Architecture::isUnknown() const      { return isArch(eArch::UNKNOWN); }
 bool Architecture::isMips() const         { return isArch(eArch::MIPS); }
@@ -75,6 +80,8 @@ void Architecture::setIsArm32()          { setName(ARCH_ARM); setBitSize(32); }
 void Architecture::setIsArm64()          { setName(ARCH_ARM64); setBitSize(64); }
 void Architecture::setIsX86()            { setName(ARCH_x86); }
 void Architecture::setIsPpc()            { setName(ARCH_PPC); }
+void Architecture::setIsRiscV32()        { setName(ARCH_RISCV32); setBitSize(32); }
+void Architecture::setIsRiscV64()        { setName(ARCH_RISCV64); setBitSize(64); }
 
 void Architecture::setIsEndianLittle()           { _endian = E_LITTLE; }
 void Architecture::setIsEndianBig()              { _endian = E_BIG; }
@@ -133,6 +140,10 @@ void Architecture::setArch()
 	else if (retdec::utils::containsCaseInsensitive(_name, ARCH_PPC))
 	{
 		_arch = eArch::PPC;
+	}
+	else if (retdec::utils::containsCaseInsensitive(_name, "riscv"))
+	{
+		_arch = eArch::RISCV;
 	}
 }
 

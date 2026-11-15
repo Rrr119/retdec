@@ -206,7 +206,8 @@ const JumpTarget* JumpTargets::push(
 				|| (arch.isArm32OrThumb() && m == CS_MODE_THUMB && a % 2)
 				|| (arch.isArm64() && a % 4)
 				|| (arch.isMipsOrPic32() && a % 4)
-				|| (arch.isPpc() && a % 4))
+				|| (arch.isPpc() && a % 4)
+				|| (arch.isRiscV() && a % 2))
 		{
 			LOG << "\t\t" << "[-] JT not aligned @ " << a << std::endl;
 		}

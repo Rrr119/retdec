@@ -70,6 +70,7 @@ class ProgramOptions
 
 		std::string mode = "bin";
 		uint64_t bitSize = 32;
+		bool bitSizeSet = false;
 		std::string arExtractPath;
 		std::string arName;
 		std::optional<uint64_t> arIdx;
@@ -214,6 +215,7 @@ void ProgramOptions::loadOption(std::list<std::string>::iterator& i)
 		try
 		{
 			bitSize = std::stoull(val);
+			bitSizeSet = true;
 			if (!(bitSize == 16 || bitSize == 32 || bitSize == 64))
 			{
 				throw std::runtime_error("");
@@ -236,11 +238,21 @@ void ProgramOptions::loadOption(std::list<std::string>::iterator& i)
 				|| a == "arm64"
 				|| a == "powerpc"
 				|| a == "x86"
+				|| a == "riscv32"
+				|| a == "riscv64"
 				|| a == "x86-64"))
 		{
 			throw std::runtime_error(
 				"[-a|--arch] unknown architecture: " + a
 			);
+		}
+		if (!bitSizeSet)
+		{
+			bitSize = (a == "x86-64"
+					|| a == "arm64"
+					|| a == "riscv64")
+					? 64
+					: 32;
 		}
 		config.architecture.setName(a);
 	}
@@ -630,7 +642,7 @@ Selective decompilation arguments:
 	[--select-functions FUNCS] Specify a comma separated list of functions to decompile (example: fnc1,fnc2,fnc3).
 	[--select-decode-only] Decode only selected parts (functions/ranges). Faster decompilation, but worse results.
 Raw or Intel HEX decompilation arguments:
-	[-a|--arch ARCH] Specify target architecture [mips|pic32|arm|thumb|arm64|powerpc|x86|x86-64].
+	[-a|--arch ARCH] Specify target architecture [mips|pic32|arm|thumb|arm64|powerpc|x86|x86-64|riscv32|riscv64].
 	                 Required if it cannot be autodetected from the input (e.g. raw mode, Intel HEX).
 	[-e|--endian ENDIAN] Specify target endianness [little|big].
 	                     Required if it cannot be autodetected from the input (e.g. raw mode, Intel HEX).

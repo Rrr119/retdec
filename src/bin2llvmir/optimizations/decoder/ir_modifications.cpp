@@ -5,6 +5,7 @@
 */
 
 #include "retdec/bin2llvmir/optimizations/decoder/decoder.h"
+#include "retdec/capstone2llvmir/riscv/riscv.h"
 
 using namespace llvm;
 
@@ -171,6 +172,10 @@ llvm::GlobalVariable* Decoder::getCallReturnObject()
 	else if (_config->getConfig().architecture.isArm64())
 	{
 		return _abi->getRegister(ARM64_REG_X0);
+	}
+	else if (_config->getConfig().architecture.isRiscV())
+	{
+		return _abi->getRegister(RISCV_REG_A0);
 	}
 
 	assert(false);

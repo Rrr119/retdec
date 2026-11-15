@@ -10,6 +10,7 @@
 #include "capstone2llvmir/arm64/arm64_impl.h"
 #include "capstone2llvmir/mips/mips_impl.h"
 #include "capstone2llvmir/powerpc/powerpc_impl.h"
+#include "capstone2llvmir/riscv/riscv_impl.h"
 #include "capstone2llvmir/x86/x86_impl.h"
 
 namespace retdec {
@@ -52,6 +53,18 @@ std::unique_ptr<Capstone2LlvmIrTranslator> Capstone2LlvmIrTranslator::createArch
 		{
 			if (basic == CS_MODE_32) return createPpc32(m, extra);
 			if (basic == CS_MODE_64) return createPpc64(m, extra);
+			break;
+		}
+		case CS_ARCH_RISCV:
+		{
+			const auto compressed = static_cast<unsigned>(basic)
+					& static_cast<unsigned>(CS_MODE_RISCVC);
+			const auto baseMode = static_cast<cs_mode>(
+					static_cast<unsigned>(basic) & ~compressed);
+			extra = static_cast<cs_mode>(
+					static_cast<unsigned>(extra) | compressed);
+			if (baseMode == CS_MODE_RISCV32) return createRiscV32(m, extra);
+			if (baseMode == CS_MODE_RISCV64) return createRiscV64(m, extra);
 			break;
 		}
 		case CS_ARCH_SPARC:
@@ -165,6 +178,38 @@ std::unique_ptr<Capstone2LlvmIrTranslator> Capstone2LlvmIrTranslator::createPpcQ
 		cs_mode extra)
 {
 	return std::make_unique<Capstone2LlvmIrTranslatorPowerpc_impl>(m, CS_MODE_QPX, extra);
+}
+
+std::unique_ptr<Capstone2LlvmIrTranslator> Capstone2LlvmIrTranslator::createRiscV32(
+		llvm::Module* m,
+		cs_mode extra)
+{
+	extra = static_cast<cs_mode>(extra | CS_MODE_RISCVC);
+	return std::make_unique<Capstone2LlvmIrTranslatorRiscV_impl>(
+			m, CS_MODE_RISCV32, extra);
+}
+
+std::unique_ptr<Capstone2LlvmIrTranslator> Capstone2LlvmIrTranslator::createRiscV64(
+		llvm::Module* m,
+		cs_mode extra)
+{
+	extra = static_cast<cs_mode>(extra | CS_MODE_RISCVC);
+	return std::make_unique<Capstone2LlvmIrTranslatorRiscV_impl>(
+			m, CS_MODE_RISCV64, extra);
+}
+
+std::unique_ptr<Capstone2LlvmIrTranslator> Capstone2LlvmIrTranslator::createRiscv32(
+		llvm::Module* m,
+		cs_mode extra)
+{
+	return createRiscV32(m, extra);
+}
+
+std::unique_ptr<Capstone2LlvmIrTranslator> Capstone2LlvmIrTranslator::createRiscv64(
+		llvm::Module* m,
+		cs_mode extra)
+{
+	return createRiscV64(m, extra);
 }
 
 std::unique_ptr<Capstone2LlvmIrTranslator> Capstone2LlvmIrTranslator::createSparc(

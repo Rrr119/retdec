@@ -232,6 +232,18 @@ bool ProviderInitialization::runOnModule(Module& m)
 			case fileformat::Architecture::ARM: a.setIsArm(); break;
 			case fileformat::Architecture::POWERPC: a.setIsPpc(); break;
 			case fileformat::Architecture::MIPS: a.setIsMips(); break;
+			case fileformat::Architecture::RISCV:
+			{
+				if (f->getFileFormat()->getWordLength() == 64)
+				{
+					a.setIsRiscV64();
+				}
+				else
+				{
+					a.setIsRiscV32();
+				}
+				break;
+			}
 			default: break; // nothing
 		}
 	}

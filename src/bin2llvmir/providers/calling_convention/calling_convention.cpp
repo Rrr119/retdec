@@ -13,6 +13,7 @@
 #include "retdec/bin2llvmir/providers/calling_convention/pic32/pic32_conv.h"
 #include "retdec/bin2llvmir/providers/calling_convention/powerpc/powerpc_conv.h"
 #include "retdec/bin2llvmir/providers/calling_convention/powerpc64/powerpc64_conv.h"
+#include "retdec/bin2llvmir/providers/calling_convention/riscv/riscv_conv.h"
 #include "retdec/bin2llvmir/providers/calling_convention/x86/x86_cdecl.h"
 #include "retdec/bin2llvmir/providers/calling_convention/x86/x86_fastcall.h"
 #include "retdec/bin2llvmir/providers/calling_convention/x86/x86_pascal.h"
@@ -183,6 +184,8 @@ CallingConventionProvider::CallingConventionProvider()
 	registerCC(CallingConvention::ID::CC_MIPS, &MipsCallingConvention::create);
 	registerCC(CallingConvention::ID::CC_MIPS64, &Mips64CallingConvention::create);
 	registerCC(CallingConvention::ID::CC_PIC32, &Pic32CallingConvention::create);
+	registerCC(CallingConvention::ID::CC_RISCV, &RiscVCallingConvention::create);
+	registerCC(CallingConvention::ID::CC_RISCV64, &RiscVCallingConvention::create);
 }
 
 CallingConventionProvider* CallingConventionProvider::getProvider()

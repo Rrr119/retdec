@@ -44,6 +44,8 @@ class CallingConvention
 			CC_POWERPC,
 			CC_POWERPC64,
 			CC_PIC32,
+			CC_RISCV,
+			CC_RISCV64,
 			CC_ENDING,
 		};
 

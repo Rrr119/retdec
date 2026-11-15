@@ -316,6 +316,7 @@ void FileDetector::setConfigFile(retdec::config::Config &config)
 	if (ca.isArm32OrThumb()) arch = retdec::fileformat::Architecture::ARM;
 	if (ca.isPpc()) arch = retdec::fileformat::Architecture::POWERPC;
 	if (ca.isMipsOrPic32()) arch = retdec::fileformat::Architecture::MIPS;
+	if (ca.isRiscV()) arch = retdec::fileformat::Architecture::RISCV;
 
 	fileParser->initArchitecture(
 			arch,

@@ -73,6 +73,20 @@ TEST_F(ArchitectureTests, CheckIfArchMethodsWork)
 	EXPECT_TRUE( arch.isKnown() );
 	EXPECT_EQ( "powerpc", arch.getName() );
 
+	arch.setIsRiscV32();
+	EXPECT_TRUE( arch.isRiscV() );
+	EXPECT_TRUE( arch.isRiscV32() );
+	EXPECT_FALSE( arch.isRiscV64() );
+	EXPECT_EQ( 32, arch.getBitSize() );
+	EXPECT_EQ( "riscv32", arch.getName() );
+
+	arch.setIsRiscV64();
+	EXPECT_TRUE( arch.isRiscV() );
+	EXPECT_FALSE( arch.isRiscV32() );
+	EXPECT_TRUE( arch.isRiscV64() );
+	EXPECT_EQ( 64, arch.getBitSize() );
+	EXPECT_EQ( "riscv64", arch.getName() );
+
 	arch.setIsUnknown();
 	EXPECT_TRUE( arch.isUnknown() );
 	EXPECT_FALSE( arch.isKnown() );

@@ -13,6 +13,7 @@
 #include "retdec/bin2llvmir/providers/abi/x86.h"
 #include "retdec/bin2llvmir/providers/abi/x64.h"
 #include "retdec/bin2llvmir/providers/abi/pic32.h"
+#include "retdec/bin2llvmir/providers/abi/riscv.h"
 
 using namespace llvm;
 
@@ -259,6 +260,21 @@ bool Abi::isPic32() const
 	return _config->getConfig().architecture.isPic32();
 }
 
+bool Abi::isRiscV() const
+{
+	return _config->getConfig().architecture.isRiscV();
+}
+
+bool Abi::isRiscV32() const
+{
+	return _config->getConfig().architecture.isRiscV32();
+}
+
+bool Abi::isRiscV64() const
+{
+	return _config->getConfig().architecture.isRiscV64();
+}
+
 bool Abi::supportsCallingConvention(const CallingConvention::ID& cc)
 {
 	return getCallingConvention(cc) != nullptr;
@@ -331,6 +347,11 @@ Abi* AbiProvider::addAbi(
 	else if (c->getConfig().architecture.isPpc())
 	{
 		auto p = _module2abi.emplace(m, std::make_unique<AbiPowerpc>(m, c));
+		return p.first->second.get();
+	}
+	else if (c->getConfig().architecture.isRiscV())
+	{
+		auto p = _module2abi.emplace(m, std::make_unique<AbiRiscV>(m, c));
 		return p.first->second.get();
 	}
 	else if (c->getConfig().architecture.isX86_64())

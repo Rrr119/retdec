@@ -26,6 +26,7 @@
 #include "retdec/capstone2llvmir/arm64/arm64_defs.h"
 #include "retdec/capstone2llvmir/mips/mips_defs.h"
 #include "retdec/capstone2llvmir/powerpc/powerpc_defs.h"
+#include "retdec/capstone2llvmir/riscv/riscv_defs.h"
 #include "retdec/capstone2llvmir/x86/x86_defs.h"
 
 namespace retdec {
@@ -145,6 +146,31 @@ class Capstone2LlvmIrTranslator
 		 * translator (with the specified mode) could not be created.
 		 */
 		static std::unique_ptr<Capstone2LlvmIrTranslator> createMips32R6(
+				llvm::Module* m,
+				cs_mode extra = CS_MODE_LITTLE_ENDIAN);
+		/**
+		 * Create 32-bit RISC-V translator with basic mode @c CS_MODE_RISCV32.
+		 * The compressed instruction extension is enabled by default and the
+		 * provided @p extra mode is combined with @c CS_MODE_RISCVC.
+		 */
+		static std::unique_ptr<Capstone2LlvmIrTranslator> createRiscV32(
+				llvm::Module* m,
+				cs_mode extra = CS_MODE_LITTLE_ENDIAN);
+		/**
+		 * Create 64-bit RISC-V translator with basic mode @c CS_MODE_RISCV64.
+		 * The compressed instruction extension is enabled by default and the
+		 * provided @p extra mode is combined with @c CS_MODE_RISCVC.
+		 */
+		static std::unique_ptr<Capstone2LlvmIrTranslator> createRiscV64(
+				llvm::Module* m,
+				cs_mode extra = CS_MODE_LITTLE_ENDIAN);
+		/**
+		 * Compatibility aliases for the RISC-V named constructors.
+		 */
+		static std::unique_ptr<Capstone2LlvmIrTranslator> createRiscv32(
+				llvm::Module* m,
+				cs_mode extra = CS_MODE_LITTLE_ENDIAN);
+		static std::unique_ptr<Capstone2LlvmIrTranslator> createRiscv64(
 				llvm::Module* m,
 				cs_mode extra = CS_MODE_LITTLE_ENDIAN);
 		/**
@@ -525,7 +551,8 @@ class Capstone2LlvmIrTranslator
 		 * cannot be disassembled with CS_OP_DETAIL = CS_OPT_OFF, or with
 		 * CS_OP_SKIPDATA = CS_OPT_OFF.
 		 *
-		 * For x86, MIPS, PowerPC, parameter @p i may not include @c detail
+		 * For x86, MIPS, PowerPC, and RISC-V, parameter @p i may not include
+		 * @c detail
 		 * member - instruction can be disassembled with
 		 * CS_OP_DETAIL = CS_OPT_ON, or with CS_OP_SKIPDATA = CS_OPT_ON.
 		 *
@@ -542,6 +569,8 @@ class Capstone2LlvmIrTranslator
 		 *            from the instruction ID alone. Hard/impossible to
 		 *            determine the type without @c detail and replicating
 		 *            the full analysis used in translation.
+		 * - riscv: The instruction ID plus bits from the raw instruction
+		 *          encoding determine the pseudo call type.
 		 * - arm: Impossible to determine if the instruction is control flow
 		 *        changing from the instruction ID alone. Instructions may
 		 *        directly write the program counter - instruction details are
@@ -552,18 +581,18 @@ class Capstone2LlvmIrTranslator
 		 * @return @c True if the Capstone instruction @p i is any kind of call
 		 * instruction, translation of which would produce call pseudo call.
 		 * @c False otherwise.
-		 * @note This may not be always known for all architectures. Right now,
-		 * it only works for x86 and MIPS. See @c isControlFlowInstruction()
-		 * for more details.
+		 * @note This may not be always known for all architectures. It works
+		 * for x86, MIPS, and RISC-V. See @c isControlFlowInstruction() for
+		 * more details.
 		 */
 		virtual bool isCallInstruction(cs_insn& i) const = 0;
 		/**
 		 * @return @c True if the Capstone instruction @p i is any kind of
 		 * return instruction, translation of which would produce return
 		 * pseudo call. @c False otherwise.
-		 * @note This may not be always known for all architectures. Right now,
-		 * it only works for x86 and MIPS. See @c isControlFlowInstruction()
-		 * for more details.
+		 * @note This may not be always known for all architectures. It works
+		 * for x86, MIPS, and RISC-V. See @c isControlFlowInstruction() for
+		 * more details.
 		 */
 		virtual bool isReturnInstruction(cs_insn& i) const = 0;
 		/**

@@ -25,6 +25,7 @@ static std::map<cs_arch, std::string> capstoneArchStringMap =
 		{CS_ARCH_SPARC, "CS_ARCH_SPARC"},
 		{CS_ARCH_SYSZ, "CS_ARCH_SYSZ"},
 		{CS_ARCH_XCORE, "CS_ARCH_XCORE"},
+		{CS_ARCH_RISCV, "CS_ARCH_RISCV"},
 		{CS_ARCH_MAX, "CS_ARCH_MAX"},
 		{CS_ARCH_ALL, "CS_ARCH_ALL"}
 };
@@ -51,7 +52,10 @@ static std::map<cs_mode, std::string> capstoneModeStringMap =
 		{CS_MODE_V9, "CS_MODE_V9"},
 		{CS_MODE_BIG_ENDIAN, "CS_MODE_BIG_ENDIAN"},
 		{CS_MODE_MIPS32, "CS_MODE_MIPS32"},
-		{CS_MODE_MIPS64, "CS_MODE_MIPS64"}
+		{CS_MODE_MIPS64, "CS_MODE_MIPS64"},
+		{CS_MODE_RISCV32, "CS_MODE_RISCV32"},
+		{CS_MODE_RISCV64, "CS_MODE_RISCV64"},
+		{CS_MODE_RISCVC, "CS_MODE_RISCVC"}
 };
 
 inline std::string capstoneModeToString(cs_mode m)

@@ -97,6 +97,9 @@ void RawDataDetector::detectArchitecture()
 		case Architecture::MIPS:
 			fileInfo.setTargetArchitecture("MIPS");
 			break;
+		case Architecture::RISCV:
+			fileInfo.setTargetArchitecture("RISC-V");
+			break;
 		case Architecture::UNKNOWN:
 		default:;
 	}

@@ -74,6 +74,14 @@ void Decoder::initTranslator()
 		arch = CS_ARCH_ARM64;
 		basicMode = CS_MODE_ARM;
 	}
+	else if (a.isRiscV())
+	{
+		arch = CS_ARCH_RISCV;
+		basicMode = a.isRiscV64()
+				? CS_MODE_RISCV64
+				: CS_MODE_RISCV32;
+		extraMode = static_cast<cs_mode>(extraMode | CS_MODE_RISCVC);
+	}
 	else
 	{
 		throw std::runtime_error("Unsupported architecture.");
@@ -191,6 +199,7 @@ void Decoder::initRanges()
 	a = arch.isArm64() ? 4 : a;
 	a = arch.isMipsOrPic32() ? 4 : a;
 	a = arch.isPpc() ? 4 : a;
+	a = arch.isRiscV() ? 2 : a;
 	_ranges.setArchitectureInstructionAlignment(a);
 
 	if (_config->getConfig().parameters.isSelectedDecodeOnly())

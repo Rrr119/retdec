@@ -1433,6 +1433,9 @@ void ElfDetector::detectArchitecture()
 		case EM_AARCH64:
 			result = "ARM AARCH64";
 			break;
+		case EM_RISCV:
+			result = "RISC-V";
+			break;
 
 		// nVidia
 		case EM_CUDA:

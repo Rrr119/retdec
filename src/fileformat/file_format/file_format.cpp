@@ -785,6 +785,15 @@ bool FileFormat::isMips() const
 }
 
 /**
+ * Find out if target architecture is RISC-V
+ * @return @c true if target architecture is RISC-V, @c false otherwise
+ */
+bool FileFormat::isRiscV() const
+{
+	return getTargetArchitecture() == Architecture::RISCV;
+}
+
+/**
  * Find out if target architecture is unknown
  * @return @c true if target architecture is unknown, @c false otherwise
  */
@@ -2367,6 +2376,9 @@ void FileFormat::dump(std::string &dumpFile)
 			break;
 		case Architecture::MIPS:
 			sArch = "MIPS";
+			break;
+		case Architecture::RISCV:
+			sArch = "RISC-V";
 			break;
 		default:
 			sArch = "unknown";

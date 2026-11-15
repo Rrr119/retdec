@@ -8,6 +8,8 @@ add_library(capstone2llvmir STATIC
 	mips/mips.cpp
 	powerpc/powerpc_init.cpp
 	powerpc/powerpc.cpp
+	riscv/riscv_init.cpp
+	riscv/riscv.cpp
 	x86/x86_init.cpp
 	x86/x86.cpp
 	capstone2llvmir_impl.cpp

@@ -320,6 +320,17 @@ CompilerDetector::CompilerDetector(
 			}
 			break;
 
+		case Architecture::RISCV:
+			if (bitWidth == 32)
+			{
+				archs.insert("riscv32");
+			}
+			else
+			{
+				archs.insert("riscv64");
+			}
+			break;
+
 		default:
 			break;
 	}
